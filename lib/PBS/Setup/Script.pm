@@ -5,7 +5,9 @@ use PBS::Setup;
 sub import {
   shift;
 
-  PBS::Setup->env(@_) if @_;
+  my %options = @_ % 2 ? ('env', @_) : @_;
+
+  PBS::Setup->env($options{env}) if $options{env};
 
   ## FIXME: would love to force autodie on caller...
 
