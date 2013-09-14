@@ -9,6 +9,8 @@ sub import {
 
   PBS::Setup->env($options{env}) if $options{env};
 
+  chdir(PBS::Setup->root_dir) if $options{chdir_to_root};
+
   ## FIXME: would love to force autodie on caller...
 
   goto \&PBS::Setup::std_imports;
