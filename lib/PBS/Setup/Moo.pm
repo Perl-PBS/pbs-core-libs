@@ -3,6 +3,7 @@ package PBS::Setup::Moo;
 # ABSTRACT: a Moo setup class
 
 use PBS::Setup;
+use Import::Into;
 use Method::Signatures::Simple ();
 use Moo                        ();
 use namespace::sweep           ();
@@ -13,8 +14,8 @@ sub import {
   my $target = caller;
 
   Method::Signatures::Simple->import(into => $target);
-  Scalar::Util->export_to_level(1, $target, qw(blessed));
-  Try::Tiny->export_to_level(1);
+  Scalar::Util->import::into($target, qw(blessed));
+  Try::Tiny->import::into($target);
   namespace::sweep->import(-cleanee => $target);
 
   ## FIXME: I wonder, anyway to call PBS::Setup->std_imports one extra level above?
