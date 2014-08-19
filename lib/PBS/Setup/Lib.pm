@@ -5,6 +5,7 @@ package PBS::Setup::Lib;
 use PBS::Setup::Std;
 use PBS::Meta;
 use File::Spec;
+use Config;
 
 sub import {
   my $class = shift;
@@ -17,12 +18,14 @@ sub import {
 
   sub setup_std_libs {
     return if $setup_std_libs_is_done;
+    my $class = shift;
 
     ## Ordered from lowest to highest to priority
 
     ## FIXME: find and setup elib's
 
-    shift->setup_extra_libs('lib');
+    $class->setup_extra_libs('lib');
+    $class->setup_deps;
 
     $setup_std_libs_is_done = 1;
   }
@@ -46,6 +49,22 @@ sub setup_extra_libs {
   }
 
   return;
+}
+
+sub setup_deps {
+  my $deps = PBS::Meta->root_dir('../deps');
+  return unless -d $deps;
+
+  my $i = 0;
+  while ($i < @INC) {
+    if ($INC[$i] =~ m{/[.]?perlbrew/}) {
+      splice(@INC, $i, 0, "$deps/lib/perl5/$Config{archname}", "$deps/lib/perl5");
+      last;
+    }
+    else {
+      $i++;
+    }
+  }
 }
 
 1;
