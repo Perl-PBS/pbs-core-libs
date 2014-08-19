@@ -10,6 +10,7 @@ use namespace::sweep           ();
 use Scalar::Util               ();
 use Try::Tiny                  ();
 use experimental               ();
+use Import::Into;
 
 sub import {
   my $target = caller;
@@ -23,10 +24,10 @@ sub import {
   ## would allow us to remove this duplicate code from here
   utf8->import();
   feature->import(':5.14');
-  experimental->import('switch');    ## Doesn't work, because Moo::import below will export warnings and fuck it up
 
-  splice(@_, 0, 1, 'Moo');
-  goto \&Moo::import;
+  Moo->import::into($target);
+
+  experimental->import('switch');
 }
 
 sub unimport {
