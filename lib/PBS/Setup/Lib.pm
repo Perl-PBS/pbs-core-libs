@@ -55,16 +55,24 @@ sub setup_deps {
   my $deps = PBS::Meta->root_dir('../deps');
   return unless -d $deps;
 
+  my $bin_dir = File::Spec->catdir($deps, 'bin');
+  my $lib_dir = File::Spec->catdir($deps, 'lib', 'perl5');
+  my @lib_dirs = (File::Spec->catdir($lib_dir, $Config{archname}), $lib_dir);
+
   my $i = 0;
   while ($i < @INC) {
     if ($INC[$i] =~ m{/[.]?perlbrew/}) {
-      splice(@INC, $i, 0, "$deps/lib/perl5/$Config{archname}", "$deps/lib/perl5");
+      splice(@INC, $i, 0, @lib_dirs);
       last;
     }
     else {
       $i++;
     }
   }
+
+  # Small man's perlbrew init, useful for exec'ed commands
+  $ENV{PERL5LIB} = join(':', @lib_dirs, $ENV{PERL5LIB});
+  $ENV{PATH} = join(':', $bin_dir, $ENV{PATH}) if -d $bin_dir;
 }
 
 1;
