@@ -1,6 +1,7 @@
 package PBS::Setup::Script;
 
 use PBS::Setup;
+use parent 'PBS::Setup';
 
 sub import {
   shift;
